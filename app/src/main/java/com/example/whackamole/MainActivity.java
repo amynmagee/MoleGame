@@ -2,6 +2,7 @@ package com.example.whackamole;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
     private GridLayout grid;
     private Drawable moleImage;
+    private Drawable dogImage;
+    private Drawable hedgehogImage;
+    private Drawable currentImage;
     private ImageView[] imageViews;
     private int moleLocation;
     private Random rand;
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     public UpdateCount update;
     public TextView score;
     public int count;
+    public int image;
+
 
     public void startPressed(View v){
 
@@ -39,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         grid = findViewById(R.id.gridLayout);
         moleImage = getDrawable(R.drawable.mole);
+        dogImage = getDrawable(R.drawable.dog);
+        hedgehogImage = getDrawable(R.drawable.hedgehog);
+        currentImage = moleImage;
+        image = 1;
         imageViews = new ImageView[16];
         rand = new Random();
         update = new UpdateCount();
@@ -60,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             imageViews[moleLocation].setImageDrawable(null);
             moleLocation = rand.nextInt(16);
-            imageViews[moleLocation].setImageDrawable(moleImage);
+            imageViews[moleLocation].setImageDrawable(currentImage);
             handler.postDelayed(update, 1000);
         }
 
@@ -72,6 +82,28 @@ public class MainActivity extends AppCompatActivity {
             score.setText(count + "");
         }
 
+    }
+
+    public void imagePressed(View v){
+        Intent i = new Intent(this, ChangeActivity.class);
+        i.putExtra("IMAGE", image);
+        startActivityForResult(i, 1);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        image = data.getIntExtra("IMAGE",1);
+        if (image == 1){
+            imageViews[moleLocation].setImageDrawable(moleImage);
+            currentImage = moleImage;
+        }
+        else if (image == 2){
+            imageViews[moleLocation].setImageDrawable(dogImage);
+            currentImage = dogImage;
+        }
+        else if(image == 3) {
+            imageViews[moleLocation].setImageDrawable(hedgehogImage);
+            currentImage = hedgehogImage;
+        }
     }
 }
 
